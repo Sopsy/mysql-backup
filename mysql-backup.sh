@@ -2,7 +2,8 @@
 # Shell script to backup MySQL databases
 # Version: 1.6
 # Author: Aleksi "Sopsy" Kinnunen
-# URL: https://github.com/Sopsy/mysql-backup/
+# URL: https://github.com/Sopsy/mysql-backup
+# License: AGPLv3
 #
 # For user, see: http://dev.mysql.com/doc/refman/5.6/en/mysql-config-editor.html
 # E.g.: mysql_config_editor set --login-path=client --host=localhost --user=backup --password
