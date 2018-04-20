@@ -1,5 +1,5 @@
-# mysql-backup
-Backup script for MySQL databases
+# mysql-backup.sh
+Backup script for MySQL databases. Mainly designed for InnoDB.
 
 ## Installation
 1. Create a local user for backups
@@ -10,4 +10,4 @@ Backup script for MySQL databases
 6. Add to crontab or as a pre-command in your backup system (e.g. backuppc has pre-cmd)
 
 ## Known issues
-- Mysqldump locks the table while dumping which delays all inserts until the dump for that table is done
+None (tested only with <10GB databases)
