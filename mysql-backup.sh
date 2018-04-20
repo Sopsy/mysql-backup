@@ -28,7 +28,7 @@
 
 ## CONFIG ##
 # Days to save old backups (date -d)
-DAYSTOSAVE=2
+DAYSTOSAVE=30
 
 # Backup destination directory
 DEST="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/mysql-backups"
