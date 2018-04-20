@@ -3,13 +3,30 @@
 # Version: 1.6
 # Author: Aleksi "Sopsy" Kinnunen
 # URL: https://github.com/Sopsy/mysql-backup
-# License: AGPLv3
+# License: AGPLv3 or later
 #
 # For user, see: http://dev.mysql.com/doc/refman/5.6/en/mysql-config-editor.html
 # E.g.: mysql_config_editor set --login-path=client --host=localhost --user=backup --password
 # Needed permissions: SELECT, LOCK TABLES, SHOW VIEW
 #
+#    mysql-backup.sh, A shell script to backup MySQL databases
+#    Copyright (C) 2018  Aleksi "Sopsy" Kinnunen
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as
+#    published by the Free Software Foundation, either version 3 of the
+#    License, or (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
 
+## CONFIG ##
 # Days to save old backups (date -d)
 DAYSTOSAVE=2
 
@@ -26,6 +43,8 @@ CHOWN="$(which chown)"
 CHMOD="$(which chmod)"
 GZIP="$(which gzip)"
 RM="$(which rm)"
+
+## END CONFIG ##
 
 if [ ! -d ${DEST} ]; then
   mkdir -p ${DEST}
