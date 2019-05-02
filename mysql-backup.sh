@@ -1,6 +1,6 @@
 #!/bin/bash
 # Shell script to backup MySQL databases
-# Version: 1.7
+# Version: 1.8
 # Author: Aleksi "Sopsy" Kinnunen
 # URL: https://github.com/Sopsy/mysql-backup
 # License: AGPLv3 or later
