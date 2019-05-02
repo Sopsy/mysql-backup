@@ -76,7 +76,7 @@ do
       echo "Duplicate file removed: ${FILE}"
     fi
     echo "Backing up ${DB}..."
-    ${MYSQLDUMP} --single-transaction ${DB} | ${GZIP} -1 > ${FILE}
+    ${MYSQLDUMP} --hex-blob --single-transaction ${DB} | ${GZIP} -1 > ${FILE}
     ${CHMOD} 0600 ${FILE}
   else
     echo "Skipping ${DB}"
