@@ -1,6 +1,6 @@
 #!/bin/bash
 # Shell script to backup MySQL databases
-# Version: 1.8
+# Version: 1.9
 # Author: Aleksi "Sopsy" Kinnunen
 # URL: https://github.com/Sopsy/mysql-backup
 # License: AGPLv3 or later
@@ -70,7 +70,7 @@ do
 
   if [ ${SKIPDB} == 0 ]; then
     # Do backup
-    FILE="${DEST}/$(hostname).${DB}.$(date +"%F_%H-%M-%S").gz"
+    FILE="${DEST}/$(hostname).${DB}.$(date +"%F_%H-%M-%S").sql.gz"
     if [ -f ${FILE} ]; then
       rm ${FILE}
       echo "Duplicate file removed: ${FILE}"
