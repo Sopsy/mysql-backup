@@ -7,7 +7,7 @@
 #
 # For user, see: http://dev.mysql.com/doc/refman/5.6/en/mysql-config-editor.html
 # E.g.: mysql_config_editor set --login-path=client --host=localhost --user=backup --password
-# Needed permissions: SELECT, LOCK TABLES, SHOW VIEW
+# Needed permissions: SELECT, LOCK TABLES, SHOW VIEW, PROCESS
 #
 #    mysql-backup.sh, A shell script to backup MySQL databases
 #    Copyright (C) 2018  Aleksi "Sopsy" Kinnunen
