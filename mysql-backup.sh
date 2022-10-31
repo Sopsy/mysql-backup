@@ -1,13 +1,13 @@
 #!/bin/bash
 # Shell script to backup MySQL databases
-# Version: 1.9
+# Version: 1.10
 # Author: Aleksi "Sopsy" Kinnunen
 # URL: https://github.com/Sopsy/mysql-backup
 # License: AGPLv3 or later
 #
 # For user, see: http://dev.mysql.com/doc/refman/5.6/en/mysql-config-editor.html
 # E.g.: mysql_config_editor set --login-path=client --host=localhost --user=backup --password
-# Needed permissions: SELECT, LOCK TABLES, SHOW VIEW, PROCESS
+# Needed permissions: SELECT, LOCK TABLES, SHOW VIEW, PROCESS, TRIGGER, EVENT
 #
 #    mysql-backup.sh, A shell script to backup MySQL databases
 #    Copyright (C) 2018  Aleksi "Sopsy" Kinnunen
@@ -76,7 +76,7 @@ do
       echo "Duplicate file removed: ${FILE}"
     fi
     echo "Backing up ${DB}..."
-    ${MYSQLDUMP} --hex-blob --single-transaction ${DB} | ${GZIP} -1 > ${FILE}
+    ${MYSQLDUMP} --hex-blob --single-transaction --routines --triggers --events ${DB} | ${GZIP} -1 > ${FILE}
     ${CHMOD} 0600 ${FILE}
   else
     echo "Skipping ${DB}"
