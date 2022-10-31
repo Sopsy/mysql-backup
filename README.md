@@ -10,4 +10,4 @@ Backup script for MySQL databases. Mainly designed for InnoDB.
 6. Add to crontab or as a pre-command in your backup system (e.g. backuppc has pre-cmd)
 
 ## Known issues
-None (tested only with <10GB databases)
+None (tested only with <100GB databases)
