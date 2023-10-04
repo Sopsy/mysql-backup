@@ -1,6 +1,6 @@
 #!/bin/bash
 # Shell script to backup MySQL databases
-# Version: 1.11
+# Version: 1.12
 # Author: Aleksi "Sopsy" Kinnunen
 # URL: https://github.com/Sopsy/mysql-backup
 # License: MIT
@@ -12,8 +12,11 @@
 
 ## CONFIG ##
 
-# Days to save old backups (date -d)
+# Days to save old backups (date -d, 0 to disable limit)
 DAYSTOSAVE=30
+
+# How many versions to keep (0 to disable limit)
+NUMTOSAVE=0
 
 # Backup destination directory
 DEST="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/mysql-backups"
@@ -62,14 +65,20 @@ do
     echo "Backing up ${DB}..."
     ${MYSQLDUMP} --hex-blob --single-transaction --routines --triggers --events ${DB} | ${GZIP} -1 > ${FILE}
     ${CHMOD} 0600 ${FILE}
+    if [ ${NUMTOSAVE} != 0 ]; then
+      echo "Removing all except the ${NUMTOSAVE} newest backup(s) for ${DB}..."
+      ls -t ${DEST}/$(hostname).${DB}.*.sql.gz | tail -n +`expr ${NUMTOSAVE} + 1` | xargs rm --
+    fi
   else
     echo "Skipping ${DB}"
   fi
 done
 
 # Remove old backups
-echo "Removing old MySQL backups..."
-find ${DEST}/$(hostname).*.gz -mtime +${DAYSTOSAVE} -type f -delete -print
+if [ ${DAYSTOSAVE} != 0 ]; then
+  echo "Removing old MySQL backups..."
+  find ${DEST}/$(hostname).*.gz -mtime +${DAYSTOSAVE} -type f -delete -print
+fi
 
 # Remove permissions from all other users except the one running this script
 ${CHOWN} ${USER}:${USER} -R ${DEST}
