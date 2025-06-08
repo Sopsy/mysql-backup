@@ -1,6 +1,6 @@
 #!/bin/bash
 # Shell script to backup MySQL databases
-# Version: 2.0
+# Version: 2.1
 # Author: Aleksi "Sopsy" Kinnunen
 # URL: https://github.com/Sopsy/mysql-backup
 # License: MIT
@@ -64,7 +64,7 @@ elif [ ${COMPRESS_METHOD} = 'gzip' ]; then
 elif [ ${COMPRESS_METHOD} = 'zstd' ]; then
   FILE_EXT='sql.zst'
   function compress() {
-    ${ZSTD} -${ZSTD_LEVEL} --threads=0
+    ${ZSTD} -${ZSTD_LEVEL} --threads=0 --long
   }
 else
   echo "Unsupported compression method '${COMPRESS_METHOD}', check config"
