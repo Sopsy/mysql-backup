@@ -1,6 +1,6 @@
 #!/bin/bash
 # Shell script to backup MySQL databases
-# Version: 1.12
+# Version: 2.0
 # Author: Aleksi "Sopsy" Kinnunen
 # URL: https://github.com/Sopsy/mysql-backup
 # License: MIT
@@ -18,6 +18,13 @@ DAYSTOSAVE=30
 # How many versions to keep (0 to disable limit)
 NUMTOSAVE=0
 
+# Compression method ('none', 'gzip' and 'zstd' supported)
+COMPRESS_METHOD='zstd'
+
+# Compression level (1-9 for GZIP, 1-19 for ZSTD)
+GZIP_LEVEL='1'
+ZSTD_LEVEL='5'
+
 # Backup destination directory
 DEST="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/mysql-backups"
 
@@ -30,6 +37,7 @@ MYSQLDUMP="$(which mysqldump)"
 CHOWN="$(which chown)"
 CHMOD="$(which chmod)"
 GZIP="$(which gzip)"
+ZSTD="$(which zstd)"
 RM="$(which rm)"
 
 ## END CONFIG ##
@@ -42,6 +50,26 @@ fi
 DBS="$(${MYSQL} -Bse 'show databases')"
 
 echo "Backup destination is ${DEST}"
+
+if [ ${COMPRESS_METHOD} = 'none' ]; then
+  FILE_EXT='sql'
+  function compress() {
+    cat
+  }
+elif [ ${COMPRESS_METHOD} = 'gzip' ]; then
+  FILE_EXT='sql.gz'
+  function compress() {
+    ${GZIP} -${GZIP_LEVEL}
+  }
+elif [ ${COMPRESS_METHOD} = 'zstd' ]; then
+  FILE_EXT='sql.zst'
+  function compress() {
+    ${ZSTD} -${ZSTD_LEVEL} --threads=0
+  }
+else
+  echo "Unsupported compression method '${COMPRESS_METHOD}', check config"
+  exit 1
+fi
 
 for DB in ${DBS}
 do
@@ -57,17 +85,17 @@ do
 
   if [ ${SKIPDB} == 0 ]; then
     # Do backup
-    FILE="${DEST}/$(hostname).${DB}.$(date +"%F_%H-%M-%S").sql.gz"
+    FILE="${DEST}/$(hostname).${DB}.$(date +"%F_%H-%M-%S").${FILE_EXT}"
     if [ -f ${FILE} ]; then
       rm ${FILE}
       echo "Duplicate file removed: ${FILE}"
     fi
     echo "Backing up ${DB}..."
-    ${MYSQLDUMP} --hex-blob --single-transaction --routines --triggers --events ${DB} | ${GZIP} -1 > ${FILE}
+    ${MYSQLDUMP} --hex-blob --single-transaction --routines --triggers --events ${DB} | compress > ${FILE}
     ${CHMOD} 0600 ${FILE}
     if [ ${NUMTOSAVE} != 0 ]; then
       echo "Removing all except the ${NUMTOSAVE} newest backup(s) for ${DB}..."
-      ls -t ${DEST}/$(hostname).${DB}.*.sql.gz | tail -n +`expr ${NUMTOSAVE} + 1` | xargs rm --
+      ls -t ${DEST}/$(hostname).${DB}.*.${FILE_EXT} | tail -n +`expr ${NUMTOSAVE} + 1` | xargs -r rm --
     fi
   else
     echo "Skipping ${DB}"
@@ -77,7 +105,7 @@ done
 # Remove old backups
 if [ ${DAYSTOSAVE} != 0 ]; then
   echo "Removing old MySQL backups..."
-  find ${DEST}/$(hostname).*.gz -mtime +${DAYSTOSAVE} -type f -delete -print
+  find ${DEST}/$(hostname).*.${FILE_EXT} -mtime +${DAYSTOSAVE} -type f -delete -print
 fi
 
 # Remove permissions from all other users except the one running this script
